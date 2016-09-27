@@ -2,7 +2,7 @@
   "name": "puppet-stackdriver-agent",
   "version": "1.3.0",
   "author": "denise stockman",
-  "license": "pfft",
+  "license": "Apache-2.0",
   "summary": "Stackdriver agent",
   "source": "https://github.com/dstockman/puppet-stackdriver-agent",
   "project_page": "https://github.com/dstockman/puppet-stackdriver-agent",
@@ -14,7 +14,7 @@
     "operatingsystemrelease":[ "6.0", "7.0"]
     },
     {
-    "operatingsystem": "AWS Linux",
+    "operatingsystem": "Amazon",
     "operatingsystemrelease": [ "2015.03" ]
     }
    ],
