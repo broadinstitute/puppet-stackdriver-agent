@@ -40,12 +40,11 @@ class stackdriver (
     'Debian'  => [ 'stackdriver-agent', 'stackdriver-extractor' ],
     default   => undef,
   },
-  $iclass = "::stackdriver::install::${::osfamily}",
-  $cclass = "::stackdriver::config::${::osfamily}",
+  $iclass = downcase("::stackdriver::install::${::osfamily}"),
+  $cclass = downcase("::stackdriver::config::${::osfamily}"),
 ) {
   validate_string ( $apikey )
   validate_array  ( $svc    )
-  $lower_osfamily = downcase($::osfamily)
 
   contain stackdriver::install
   contain stackdriver::config
