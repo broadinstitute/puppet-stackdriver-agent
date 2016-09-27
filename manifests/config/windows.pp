@@ -24,11 +24,11 @@ class stackdriver::config::windows(
 
   registry::value {
     "${name}-apiregkey":
-      key     => $apiregkey,
-      value   => 'ApiKey',
-      type    => 'string',
-      data    => $apikey,
-      notify  => Service[$svc];
+      key    => $apiregkey,
+      value  => 'ApiKey',
+      type   => 'string',
+      data   => $::stackdriver::apikey,
+      notify => Service[$::stackdriver::svc];
   }
 
 }

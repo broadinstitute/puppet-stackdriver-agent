@@ -26,7 +26,7 @@ class stackdriver::config::debian(
     group   => 'root',
     mode    => '0440',  # secure API key
     content => template("stackdriver/${::kernel}/${sysconfig}.erb"),
-    notify  => Service[$svc],
+    notify  => Service[$::stackdriver::svc],
   }
 
 }

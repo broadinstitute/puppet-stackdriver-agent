@@ -43,12 +43,14 @@ class stackdriver::install::debian(
     'key'        => 'B10FDCDCEC088467D0069F423C6E15887B190BD2',
     'key_source' => 'https://app.stackdriver.com/RPM-GPG-KEY-stackdriver',
   },
+  # lint:ignore:parameter_order
   $aptsource = {
     'location' => 'http://repo.stackdriver.com/apt',
     'release'  => $::lsbdistcodename,
     'repos'    => 'main',
     'key'      => 'B10FDCDCEC088467D0069F423C6E15887B190BD2',
   },
+  # lint:endignore
 ) inherits stackdriver {
 
   validate_string ( $pkg        )
@@ -57,7 +59,7 @@ class stackdriver::install::debian(
   validate_hash   ( $aptsource  )
 
   # Setup repo unless configure not to.
-  if $managerepo {
+  if $::stackdriver::managerepo {
     Apt::Source {
       require => Apt::Key['stackdriver'],
       before  => Package[$pkg],

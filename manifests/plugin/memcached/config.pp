@@ -4,11 +4,12 @@
 #
 # Configures Memcached Agent Plugin for Stackdriver Agent
 #
-class stackdriver::plugin::memcached::config inherits stackdriver::plugin::memcached {
+class stackdriver::plugin::memcached::config(
+) inherits stackdriver::plugin::memcached {
 
-  file { $config:
+  file { $::stackdriver::plugin::memcached::config:
     ensure  => file,
-    content => template("stackdriver/${::kernel}/${config}.erb"),
+    content => template("stackdriver/${::kernel}/${::stackdriver::plugin::memcached::config}.erb"),
     owner   => 'root',
     group   => 'root',
     mode    => '0444',
@@ -16,4 +17,3 @@ class stackdriver::plugin::memcached::config inherits stackdriver::plugin::memca
   }
 
 }
-

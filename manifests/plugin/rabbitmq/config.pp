@@ -5,13 +5,11 @@
 # Configures RabbitMQ Agent Plugin for Stackdriver Agent
 #
 class stackdriver::plugin::rabbitmq::config(
-
-
 ) inherits stackdriver::plugin::rabbitmq {
 
-  file { $config:
+  file { $::stackdriver::plugin::rabbitmq::config:
     ensure  => file,
-    content => template("stackdriver/${::kernel}/${config}.erb"),
+    content => template("stackdriver/${::kernel}/${::stackdriver::plugin::rabbitmq::config}.erb"),
     owner   => 'root',
     group   => 'root',
     mode    => '0440', # secure
@@ -19,4 +17,3 @@ class stackdriver::plugin::rabbitmq::config(
   }
 
 }
-

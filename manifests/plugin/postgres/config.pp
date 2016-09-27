@@ -5,13 +5,11 @@
 # Configures Postgres Agent Plugin for Stackdriver Agent
 #
 class stackdriver::plugin::postgres::config(
-
-
 ) inherits stackdriver::plugin::postgres {
 
-  file { $config:
+  file { $::stackdriver::plugin::postgres::config:
     ensure  => file,
-    content => template("stackdriver/${::kernel}/${config}.erb"),
+    content => template("stackdriver/${::kernel}/${::stackdriver::plugin::postgres::config}.erb"),
     owner   => 'root',
     group   => 'root',
     mode    => '0440', # secure
@@ -19,4 +17,3 @@ class stackdriver::plugin::postgres::config(
   }
 
 }
-

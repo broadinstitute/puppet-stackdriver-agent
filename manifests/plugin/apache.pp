@@ -40,21 +40,22 @@
 #   - 'apache'
 #
 class stackdriver::plugin::apache(
-
   $config   =  '/opt/stackdriver/collectd/etc/collectd.d/apache.conf',
-
   $url      = 'http://127.0.0.1/mod_status?auto',
   $user     = undef,
   $password = undef,
-
 ) {
 
   Class['stackdriver'] -> Class[$name]
 
   validate_string ( $config )
   validate_string ( $url    )
-  if $user      { validate_string ( $user     ) }
-  if $password  { validate_string ( $password ) }
+  if $user {
+    validate_string ( $user     )
+  }
+  if $password {
+    validate_string ( $password )
+  }
 
   #contain "${name}::install"
 

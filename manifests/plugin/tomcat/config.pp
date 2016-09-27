@@ -5,55 +5,53 @@
 # Configures Tomcat Monitoring for Stackdriver Agent
 #
 class stackdriver::plugin::tomcat::config(
-
-
 ) inherits stackdriver::plugin::tomcat {
 
   # Setup directories
-  exec { $path:
+  exec { $::stackdriver::plugin::tomcat::path:
     path    => '/bin:/usr/bin:/sbin:/usr/sbin',
-    command => "mkdir -p ${path}/conf ; mkdir -p ${path}/log",
-    unless  => "test -d ${path}",
+    command => "mkdir -p ${::stackdriver::plugin::tomcat::path}/conf ; mkdir -p ${::stackdriver::plugin::tomcat::path}/log",
+    unless  => "test -d ${::stackdriver::plugin::tomcat::path}",
     user    => 'root',
   }
 
   # Install package
   file { '/mnt/jmxtrans/jmxtrans-all.jar':
-    ensure  => $ensure,
+    ensure  => $::stackdriver::plugin::tomcat::ensure,
     source  => 'puppet:///modules/stackdriver/tomcat/jmxtrans-all.jar',
     owner   => 'root',
     group   => 'root',
     mode    => '0640',
-    require => Exec[$path],
+    require => Exec[$::stackdriver::plugin::tomcat::path],
     before  => Service['jmxtrans'],
     notify  => Service['jmxtrans'],
   }
 
   # Install Conf files
   file { '/mnt/jmxtrans/conf/tomcat-7.json':
-    ensure  => $ensure,
+    ensure  => $::stackdriver::plugin::tomcat::ensure,
     content => template('stackdriver/tomcat/tomcat-7.json.erb'),
     owner   => 'root',
     group   => 'root',
     mode    => '0640',
-    require => Exec[$path],
+    require => Exec[$::stackdriver::plugin::tomcat::path],
     before  => Service['jmxtrans'],
     notify  => Service['jmxtrans'],
   }
   file { '/mnt/jmxtrans/conf/jvm-sun-hotspot.json':
-    ensure  => $ensure,
+    ensure  => $::stackdriver::plugin::tomcat::ensure,
     content => template('stackdriver/tomcat/jvm-sun-hotspot.json.erb'),
     owner   => 'root',
     group   => 'root',
     mode    => '0640',
-    require => Exec[$path],
+    require => Exec[$::stackdriver::plugin::tomcat::path],
     before  => Service['jmxtrans'],
     notify  => Service['jmxtrans'],
   }
 
   # Install init script
   file { '/etc/init.d/jmxtrans':
-    ensure => $ensure,
+    ensure => $::stackdriver::plugin::tomcat::ensure,
     source => 'puppet:///modules/stackdriver/tomcat/initd-jmxtrans',
     owner  => 'root',
     group  => 'root',
@@ -64,7 +62,7 @@ class stackdriver::plugin::tomcat::config(
 
   # Overrides via /etc/sysconfig/jmxtrans
   file { '/etc/sysconfig/jmxtrans':
-    ensure  => $ensure,
+    ensure  => $::stackdriver::plugin::tomcat::ensure,
     content => template('stackdriver/tomcat/sysconfig-jmxtrans.erb'),
     owner   => 'root',
     group   => 'root',
@@ -74,7 +72,7 @@ class stackdriver::plugin::tomcat::config(
   }
 
   service { 'jmxtrans':
-    ensure     => $service_ensure,
+    ensure     => $::stackdriver::plugin::tomcat::service_ensure,
     enable     => true,
     hasstatus  => true,
     hasrestart => true,

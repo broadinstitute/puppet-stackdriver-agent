@@ -46,9 +46,9 @@ class stackdriver::install::redhat(
   validate_hash   ( $repo   )
 
   # Setup repo unless configure not to.
-  if $managerepo {
+  if $::stackdriver::managerepo {
     Yumrepo {
-      before  => Package[$pkg],
+      before => Package[$pkg],
     }
 
     ensure_resource('yumrepo', 'stackdriver-agent', $repo)
@@ -56,7 +56,7 @@ class stackdriver::install::redhat(
 
   # Install package
   ensure_resource('package', $pkg, {
-    'ensure'  => $ensure,
+    'ensure' => $ensure,
   })
 
 }

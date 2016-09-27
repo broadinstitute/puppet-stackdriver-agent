@@ -5,13 +5,11 @@
 # Configures Nginx Agent Plugin for Stackdriver Agent
 #
 class stackdriver::plugin::nginx::config(
-
-
 ) inherits stackdriver::plugin::nginx {
 
-  file { $config:
+  file { $::stackdriver::plugin::nginx::config:
     ensure  => file,
-    content => template("stackdriver/${::kernel}/${config}.erb"),
+    content => template("stackdriver/${::kernel}/${::stackdriver::plugin::nginx::config}.erb"),
     owner   => 'root',
     group   => 'root',
     mode    => '0440', # secure
@@ -19,4 +17,3 @@ class stackdriver::plugin::nginx::config(
   }
 
 }
-
