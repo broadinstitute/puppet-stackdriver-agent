@@ -24,11 +24,9 @@
 # - Registry uninstallation key created by an installed Stackdriver Agent
 #
 class stackdriver::install::windows(
-
   $ensure       = 'present', # NOOP until stackdriver supports proper windows packages
   $installer    = '/tmp/Stackdriverinstaller-0.3.exe',
   $uninstallkey = 'HKLM:\Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\StackdriverAgent',
-
 ) inherits stackdriver {
 
   validate_string ( $ensure       )
@@ -65,4 +63,3 @@ class stackdriver::install::windows(
   }
 
 }
-

@@ -15,9 +15,7 @@
 # - Stackdriver configuration file
 #
 class stackdriver::config::debian(
-
   $sysconfig = '/etc/default/stackdriver-agent',
-
 ) inherits stackdriver {
 
   validate_string ( $sysconfig )

@@ -15,9 +15,7 @@
 # - Stackdriver configuration file
 #
 class stackdriver::config::redhat(
-
   $sysconfig = '/etc/sysconfig/stackdriver',
-
 ) inherits stackdriver {
 
   validate_string ( $sysconfig )
@@ -32,4 +30,3 @@ class stackdriver::config::redhat(
   }
 
 }
-

@@ -37,22 +37,18 @@
 # - Stackdriver APT repository
 #
 class stackdriver::install::debian(
-
-  $pkg    = 'stackdriver-agent',
-  $ensure = 'present',
-
-  $aptkey = {
-    'key'         => 'B10FDCDCEC088467D0069F423C6E15887B190BD2',
-    'key_source'  => 'https://app.stackdriver.com/RPM-GPG-KEY-stackdriver',
+  $ensure    = 'present',
+  $pkg       = 'stackdriver-agent',
+  $aptkey    = {
+    'key'        => 'B10FDCDCEC088467D0069F423C6E15887B190BD2',
+    'key_source' => 'https://app.stackdriver.com/RPM-GPG-KEY-stackdriver',
   },
-
   $aptsource = {
-    'location'  => 'http://repo.stackdriver.com/apt',
-    'release'   => $::lsbdistcodename,
-    'repos'     => 'main',
-    'key'       => 'B10FDCDCEC088467D0069F423C6E15887B190BD2',
+    'location' => 'http://repo.stackdriver.com/apt',
+    'release'  => $::lsbdistcodename,
+    'repos'    => 'main',
+    'key'      => 'B10FDCDCEC088467D0069F423C6E15887B190BD2',
   },
-
 ) inherits stackdriver {
 
   validate_string ( $pkg        )
@@ -77,4 +73,3 @@ class stackdriver::install::debian(
   })
 
 }
-

@@ -30,18 +30,15 @@
 # - Yum Repository containing stackdriver RPM package(s)
 #
 class stackdriver::install::redhat(
-
-  $pkg    = [ 'stackdriver-agent', 'stackdriver-extractor' ],
   $ensure = 'present',
-
-  $repo = {
-    'baseurl'   => "http://repo.stackdriver.com/repo/el${::operatingsystemmajrelease}/\$basearch/",
-    'gpgkey'    => 'https://www.stackdriver.com/RPM-GPG-KEY-stackdriver',
-    'descr'     => 'stackdriver',
-    'enabled'   => 1,
-    'gpgcheck'  => 1,
+  $pkg    = [ 'stackdriver-agent', 'stackdriver-extractor' ],
+  $repo   = {
+    'baseurl'  => "http://repo.stackdriver.com/repo/el${::operatingsystemmajrelease}/\$basearch/",
+    'gpgkey'   => 'https://www.stackdriver.com/RPM-GPG-KEY-stackdriver',
+    'descr'    => 'stackdriver',
+    'enabled'  => 1,
+    'gpgcheck' => 1,
   },
-
 ) inherits stackdriver {
 
   validate_array  ( $pkg    )
@@ -63,4 +60,3 @@ class stackdriver::install::redhat(
   })
 
 }
-

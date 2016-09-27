@@ -28,17 +28,15 @@
 #  }
 #
 class stackdriver (
-
-  $apikey = undef,
-  $ensure = 'present',
-  $managerepo = true,
+  $apikey         = undef,
+  $ensure         = 'present',
+  $managerepo     = true,
   $service_ensure = 'running',
   $service_enable = true,
-
-  $svc = $::osfamily ? {
-    'RedHat'  => [ 'stackdriver-agent', 'stackdriver-extractor' ],
-    'Debian'  => [ 'stackdriver-agent', 'stackdriver-extractor' ],
-    default   => undef,
+  $svc            = $::osfamily ? {
+    'RedHat' => [ 'stackdriver-agent', 'stackdriver-extractor' ],
+    'Debian' => [ 'stackdriver-agent', 'stackdriver-extractor' ],
+    default  => undef,
   },
 
 ) {
@@ -52,7 +50,6 @@ class stackdriver (
   $cclass = "${name}::config::${lower_osfamily}"
   $sclass = "${name}::service"
 
-
   # OS Family specific installation
   class { "::${iclass}":
     ensure => $ensure,
@@ -60,11 +57,11 @@ class stackdriver (
   }
   contain $iclass
 
-
   # OS Family specific configuration
-  class { "::${cclass}": require => Class[$iclass]; }
+  class { "::${cclass}":
+    require => Class[$iclass]
+  }
   contain $cclass
-
 
   # Service
   class { "::${sclass}":

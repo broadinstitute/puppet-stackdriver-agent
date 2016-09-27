@@ -19,7 +19,7 @@
 # - Registry uninstallation key created by an installed Stackdriver Agent
 #
 class stackdriver::config::windows(
-  $apiregkey  = 'HKLM:\Software\Wow6432Node\Stackdriver\Agent',
+  $apiregkey = 'HKLM:\Software\Wow6432Node\Stackdriver\Agent',
 ) inherits stackdriver {
 
   registry::value {
