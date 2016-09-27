@@ -58,6 +58,4 @@ class stackdriver (
     stackdriver::plugin { $plugins: }
   }
 
-
 }
-
