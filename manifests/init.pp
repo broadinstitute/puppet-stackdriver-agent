@@ -75,7 +75,7 @@ class stackdriver (
   $plugins = hiera_array("${name}::plugins", [])
 
   if ! empty($plugins) {
-    stackdriver::plugin { $plugins: }
+    ::stackdriver::plugin { $plugins: }
   }
 
 }
