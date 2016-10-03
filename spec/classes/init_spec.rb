@@ -48,11 +48,6 @@ describe 'stackdriver' do
           })
         }
 
-        it {
-          should contain_package('stackdriver-agent')
-            .with({ "ensure" => "present" })
-        }
-
         context "all services enabled and running" do
           all_services.each do |svc|
             context "#{svc}" do
@@ -107,7 +102,7 @@ describe 'stackdriver' do
         let (:apt_key_source) { 'https://app.stackdriver.com/RPM-GPG-KEY-stackdriver' }
         let (:apt_location) { 'http://repo.stackdriver.com/apt' }
 
-        context 'with defaults for all parameters' do
+        context "with defaults for all parameters, specific to #{facts[:osfamily]}" do
           context 'default service configuration file' do
             it {
               should contain_file('/etc/default/stackdriver-agent')
@@ -122,6 +117,12 @@ describe 'stackdriver' do
                   ],
               })
             }
+
+          it {
+            should contain_package('stackdriver-agent')
+              .with({ "ensure" => "present" })
+          }
+
           end
         end
 
@@ -174,7 +175,7 @@ describe 'stackdriver' do
 
       when 'RedHat'
 
-        context 'with defaults for all parameters' do
+        context "with defaults for all parameters, specific to #{facts[:osfamily]}" do
           context 'default service configuration file' do
             it {
               should contain_file('/etc/sysconfig/stackdriver')
@@ -189,6 +190,17 @@ describe 'stackdriver' do
                   ],
               })
             }
+
+            it {
+              should contain_package('stackdriver-agent')
+                .with({ "ensure" => "present" })
+            }
+
+            it {
+              should contain_package('stackdriver-extractor')
+                .with({ "ensure" => "present" })
+            }
+
           end
         end
 
