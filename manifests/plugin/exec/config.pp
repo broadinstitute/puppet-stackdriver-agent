@@ -9,7 +9,7 @@ class stackdriver::plugin::exec::config(
 
   file { $::stackdriver::plugin::exec::config:
     ensure  => file,
-    content => template("stackdriver/${::kernel}/${::stackdriver::plugin::exec::config}.erb"),
+    content => template("stackdriver/${::kernel}${::stackdriver::plugin::exec::config}.erb"),
     owner   => 'root',
     group   => 'root',
     mode    => '0444',
