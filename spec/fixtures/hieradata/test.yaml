@@ -1,0 +1,16 @@
+---
+stackdriver::apikey: 'test1234'
+stackdriver::plugins:
+    - 'apache'
+    - 'elasticsearch'
+    - 'exec'
+    - 'memcached'
+    - 'mongo'
+    - 'nginx'
+    - 'postgres'
+    - 'rabbitmq'
+    - 'redis'
+    - 'tomcat'
+    - 'zookeeper'
+stackdriver::plugin::exec::execs:
+    - Exec "nobody:nobody" "/opt/stackdriver/collectd/bin/autometric" "-v" "-m" "tmp.file.count" "-H" "-c" "/bin/ls /tmp | /usr/bin/wc -l"

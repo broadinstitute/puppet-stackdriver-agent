@@ -14,6 +14,19 @@ describe 'stackdriver' do
       let (:upper_name) { 'Stackdriver' }
       let (:lower_osfamily) { "#{facts[:osfamily]}".downcase }
       let (:upper_osfamily) { "#{facts[:osfamily]}".downcase.capitalize }
+      all_plugins = Array[
+        'apache',
+        'elasticsearch',
+        'exec',
+        'memcached',
+        'mongo',
+        'nginx',
+        'postgres',
+        'rabbitmq',
+        'redis',
+        'tomcat',
+        'zookeeper',
+      ]
 
       context 'with defaults for all parameters' do
         it {
@@ -54,6 +67,17 @@ describe 'stackdriver' do
           should contain_package('stackdriver-agent')
             .with({ "ensure" => "absent" })
         }
+      end
+
+      context "with all plugins activated" do
+        all_plugins.each do |plugin|
+          context "#{plugin}" do
+            let(:hiera_config) { 'spec/fixtures/hiera/hiera.yaml' }
+            hiera = Hiera.new(:config => 'spec/fixtures/hiera/hiera.yaml')
+
+            it { should contain_class("#{name}::plugin::#{plugin}") }
+          end
+        end
       end
 
       case facts[:osfamily]
