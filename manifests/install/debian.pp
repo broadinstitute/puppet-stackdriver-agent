@@ -60,6 +60,8 @@ class stackdriver::install::debian(
 
   # Setup repo unless configure not to.
   if $::stackdriver::managerepo {
+    require apt
+
     Apt::Source {
       require => Apt::Key['stackdriver'],
       before  => Package[$pkg],
