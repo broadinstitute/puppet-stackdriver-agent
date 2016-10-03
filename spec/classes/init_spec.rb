@@ -27,6 +27,10 @@ describe 'stackdriver' do
         'tomcat',
         'zookeeper',
       ]
+      all_services = Array[
+        'stackdriver-agent',
+        'stackdriver-extractor',
+      ]
 
       context 'with defaults for all parameters' do
         it {
@@ -45,28 +49,24 @@ describe 'stackdriver' do
         }
 
         it {
-          should contain_class("#{name}::service")
-            .with({
-              "service_ensure" => "running",
-              "service_enable" => true,
-              # "require" => "Class[#{upper_name}::config::#{lower_osfamily}]",
-          })
-        }
-
-        it {
           should contain_package('stackdriver-agent')
             .with({ "ensure" => "present" })
         }
 
-      end
+        context "all services enabled and running" do
+          all_services.each do |svc|
+            context "#{svc}" do
+              it {
+                should contain_service("#{svc}")
+                  .with({
+                    "ensure" => "running",
+                    "enable" => true,
+                  })
+              }
+            end
+          end
+        end
 
-      context 'with ensure set to absent' do
-        let (:params) { { :ensure => "absent" } }
-
-        it {
-          should contain_package('stackdriver-agent')
-            .with({ "ensure" => "absent" })
-        }
       end
 
       context "with all plugins activated" do
@@ -80,26 +80,49 @@ describe 'stackdriver' do
         end
       end
 
+      context 'with service_ensure set to stopped and service_enable set to false' do
+        let (:params) { {
+          :service_ensure => "stopped",
+          :service_enable => false,
+        } }
+
+        context "all services stopped" do
+          all_services.each do |svc|
+            context "#{svc}" do
+              it {
+                should contain_service("#{svc}")
+                  .with({
+                    "ensure" => "stopped",
+                    "enable" => false,
+                  })
+              }
+            end
+          end
+        end
+      end
+
       case facts[:osfamily]
       when 'Debian'
         let (:apt_key) { 'B10FDCDCEC088467D0069F423C6E15887B190BD2' }
         let (:apt_key_source) { 'https://app.stackdriver.com/RPM-GPG-KEY-stackdriver' }
         let (:apt_location) { 'http://repo.stackdriver.com/apt' }
 
-        context 'osfamily differences with defaults for all parameters' do
-          it {
-            should contain_file('/etc/default/stackdriver-agent')
-              .with({
-                'ensure'  => 'file',
-                'owner'   => 'root',
-                'group'   => 'root',
-                'mode'    => '0440',
-                'notify'  => [
-                  "Service[stackdriver-agent]",
-                  "Service[stackdriver-extractor]",
-                ],
-            })
-          }
+        context 'with defaults for all parameters' do
+          context 'default service configuration file' do
+            it {
+              should contain_file('/etc/default/stackdriver-agent')
+                .with({
+                  'ensure'  => 'file',
+                  'owner'   => 'root',
+                  'group'   => 'root',
+                  'mode'    => '0440',
+                  'notify'  => [
+                    "Service[stackdriver-agent]",
+                    "Service[stackdriver-extractor]",
+                  ],
+              })
+            }
+          end
         end
 
         context 'with managerepo set to true' do
@@ -131,26 +154,42 @@ describe 'stackdriver' do
           it { should_not contain_class('apt::source') }
         end
 
-      when 'RedHat'
-        context 'osfamily differences with defaults for all parameters' do
-          it {
-            should contain_file('/etc/sysconfig/stackdriver')
-              .with({
-                'ensure'  => 'file',
-                'owner'   => 'root',
-                'group'   => 'root',
-                'mode'    => '0440',
-                'notify'  => [
-                  "Service[stackdriver-agent]",
-                  "Service[stackdriver-extractor]",
-                ],
-            })
-          }
+        context 'with ensure set to absent' do
+          let (:params) { { :ensure => "absent" } }
 
           it {
-            should contain_package('stackdriver-extractor')
-              .with({ "ensure" => "present" })
+            should contain_package('stackdriver-agent')
+              .with({ "ensure" => "absent" })
           }
+        end
+
+        context 'with apikey set' do
+          let (:params) { { :apikey => "abc1234" } }
+
+          it {
+            should contain_file('/etc/default/stackdriver-agent')
+              .with_content(/STACKDRIVER_API_KEY="abc1234"/)
+          }
+        end
+
+      when 'RedHat'
+
+        context 'with defaults for all parameters' do
+          context 'default service configuration file' do
+            it {
+              should contain_file('/etc/sysconfig/stackdriver')
+                .with({
+                  'ensure'  => 'file',
+                  'owner'   => 'root',
+                  'group'   => 'root',
+                  'mode'    => '0440',
+                  'notify'  => [
+                    "Service[stackdriver-agent]",
+                    "Service[stackdriver-extractor]",
+                  ],
+              })
+            }
+          end
         end
 
         context 'with managerepo set to true' do
@@ -178,10 +217,26 @@ describe 'stackdriver' do
           let (:params) { { :ensure => "absent" } }
 
           it {
+            should contain_package('stackdriver-agent')
+              .with({ "ensure" => "absent" })
+          }
+
+          it {
             should contain_package('stackdriver-extractor')
               .with({ "ensure" => "absent" })
           }
         end
+
+        context 'with apikey set' do
+          let (:params) { { :apikey => "abc1234" } }
+
+          it {
+            should contain_file('/etc/sysconfig/stackdriver')
+              .with_content(/STACKDRIVER_API_KEY="abc1234"/)
+          }
+        end
+
+
       end
 
     end
