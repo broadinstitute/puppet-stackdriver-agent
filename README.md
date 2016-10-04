@@ -1,6 +1,11 @@
 # puppet-stackdriver-agent
-
+[![Build Status](https://travis-ci.org/broadinstitute/puppet-stackdriver-agent.svg?branch=master)](https://travis-ci.org/broadinstitute/puppet-stackdriver-agent)
+[![License (Apache 2.0)](https://img.shields.io/badge/license-Apache-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 Installs stackdriver-agent.
+
+This module was forked from https://github.com/dstockman/puppet-stackdriver-agent.  The original module appears to be unsupported currently, so we have created this fork.  We have added rspec tests, merged in several of the outstanding PRs from the original repo, and linked the repo up to [TravisCI](https://travis-ci.org/broadinstitute/puppet-stackdriver-agent) to run the automated tests on PRs.  We have also fixed some bugs we found along the way.
+
+**Note: We have not tested, either manually or in rspec tests, the Windows side of this module.**
 
 ## Requirements
 
@@ -27,7 +32,7 @@ Supported/tested Operating Systems by OS Family:
 
 ## Usage
 
-This module requires a Stackdriver account.  Free trial accounts are available at their [website](http://www.stackdriver.com/signup).
+This module requires a Stackdriver API key.  Stackdriver is now a part of [Google](https://www.google.com), so more information can be found at https://cloud.google.com/monitoring/.
 
 ### Base Agent
 
@@ -120,15 +125,26 @@ Plugin defaults are shown using the recommended Hiera format.
 Values enclosed in <> do not have defaults and are required.
 Values enclosed in () have an undef default and are optional.
 
-### Redis
+### Apache httpd
 
-Configures the redis plugin on the local host running on port 6379.
-Note: this module requires hiredis-devel be available to the system.
+Configures the Apache httpd plugin on the local host running on port 80.
+User and Password settings are only required if the URL requires authentication.
 
 ```yaml
-stackdriver::plugin::redis::host:       'localhost'
-stackdriver::plugin::redis::port:       '6379'
-stackdriver::plugin::redis::timeout:    '2000'
+stackdriver::plugin::apache::user:     '(OPTIONAL USER)'
+stackdriver::plugin::apache::password: '(OPTIONAL USER PASSWORD)'
+stackdriver::plugin::apache::url:      'http://127.0.0.1/mod_status?auto'
+```
+
+### Elasticsearch
+
+Configures the Elasticsearch plugin on the local host using port 9200.
+Host and Port settings are optional.
+Prerequisites for this plugin are documented on Stackdriver's [support site](https://cloud.google.com/monitoring/agent/plugins/elasticsearch).
+
+```yaml
+stackdriver::plugin::elasticsearch::host: 'localhost'
+stackdriver::plugin::elasticsearch::port: '9200'
 ```
 
 ### Exec
@@ -139,7 +155,7 @@ https://collectd.org/wiki/index.php/Plugin:Exec
 All settings are optional.
 
 ```yaml
-stackdriver::plugin::exec::config:      '/opt/stackdriver/collectd/etc/collectd.d/exec.conf'
+stackdriver::plugin::exec::config: '/opt/stackdriver/collectd/etc/collectd.d/exec.conf'
 stackdriver::plugin::exec::execs:
   - Exec "nobody:nobody" "/opt/stackdriver/collectd/bin/autometric" "-v" "-m" "tmp.file.count" "-H" "-c" "/bin/ls /tmp | /usr/bin/wc -l"
 ```
@@ -150,8 +166,8 @@ Configures the memcahed plugin on the local host running on port 11211.
 All settings are optional.
 
 ```yaml
-stackdriver::plugin::memcahed::host:       'localhost'
-stackdriver::plugin::memcahed::port:       '11211'
+stackdriver::plugin::memcahed::host: 'localhost'
+stackdriver::plugin::memcahed::port: '11211'
 ```
 
 ### MongoDB
@@ -159,34 +175,23 @@ stackdriver::plugin::memcahed::port:       '11211'
 Configures the MongoDB plugin on the local host running on port 27017.
 
 ```yaml
-stackdriver::plugin::mongo::host:       'localhost'
-stackdriver::plugin::mongo::user:       'stackdriver'
-stackdriver::plugin::mongo::password:   'ahzae8aiLiKoe'
-stackdriver::plugin::mongo::port:       '27017'
+stackdriver::plugin::mongo::host:     'localhost'
+stackdriver::plugin::mongo::user:     'stackdriver'
+stackdriver::plugin::mongo::password: 'ahzae8aiLiKoe'
+stackdriver::plugin::mongo::port:     '27017'
 ```
 
-### Postgresql
+### Nginx
 
-Configures the Postgreqsql plugin on the local host using UNIX domain sockets.
-Prerequisites for this plugin are documented on Stackdriver's [support site](http://feedback.stackdriver.com/knowledgebase/articles/232555-postgresql-plugin).
+Configures the Nginx plugin on the local host running on port 80 (with authentication).
 
 ```yaml
-stackdriver::plugin::postgres::user:        'stackdriver'
-stackdriver::plugin::postgres::password:    'xoiboov9Pai5e'
-stackdriver::plugin::postgres::dbname:      '<REQUIRED PARAM>'
+stackdriver::plugin::nginx::url:      'http://127.0.0.1/nginx_status'
+stackdriver::plugin::nginx::user:     'stackdriver'
+stackdriver::plugin::nginx::password: 'Eef3haeziqu3j'
 ```
 
-### nginx
-
-Configures the nginx plugin on the local host running on port 80 (with authentication).
-
-```yaml
-stackdriver::plugin::nginx::url:        'http://127.0.0.1/nginx_status'
-stackdriver::plugin::nginx::user:       'stackdriver'
-stackdriver::plugin::nginx::password:   'Eef3haeziqu3j'
-```
-
-Configures the nginx plugin on the local host running on port 443 (SSL, no authentication, no verification).
+Configures the Nginx plugin on the local host running on port 443 (SSL, no authentication, no verification).
 
 ```yaml
 stackdriver::plugin::nginx::url:        'https://127.0.0.1/nginx_status'
@@ -194,29 +199,16 @@ stackdriver::plugin::nginx::verifypeer: false
 stackdriver::plugin::nginx::verifyhost: false
 ```
 
-### apache
+### Postgresql
 
-Configures the apache plugin on the local host running on port 80.
-User and Password settings are only required if the URL requires authentication.
-
-```yaml
-stackdriver::plugin::apache::user:      '(OPTIONAL USER)'
-stackdriver::plugin::apache::password:  '(OPTIONAL USER PASSWORD)'
-stackdriver::plugin::apache::url:       'http://127.0.0.1/mod_status?auto'
-```
-
-
-### Elasticsearch
-
-Configures the Elasticsearch plugin on the local host using port 9200.
-Host and Port settings are optional.
-Prerequisites for this plugin are documented on Stackdriver's [support site](http://support.stackdriver.com/customer/portal/articles/1491778-elasticsearch-plugin).
+Configures the Postgreqsql plugin on the local host using UNIX domain sockets.
+Prerequisites for this plugin are documented on Stackdriver's [support site](https://cloud.google.com/monitoring/agent/plugins/postgreSQL).
 
 ```yaml
-stackdriver::plugin::elasticsearch::host:      'localhost'
-stackdriver::plugin::elasticsearch::port:      '9200'
+stackdriver::plugin::postgres::user:     'stackdriver'
+stackdriver::plugin::postgres::password: 'xoiboov9Pai5e'
+stackdriver::plugin::postgres::dbname:   '<REQUIRED PARAM>'
 ```
-
 
 ### RabbitMQ
 
@@ -226,41 +218,51 @@ be unique and defaults to a null string ('') if not specified.
 
 ```yaml
 stackdriver::plugin::rabbitmq::queues:
-  - vhost:     '/'
-    host:      'localhost'
-    port:      '15672'
-    name:      '(First Queue Name)'
-    user:      'guest'
-    password:  'guest'
-  - vhost:     '/'
-    host:      'localhost'
-    port:      '15672'
-    name:      '(Second Queue Name)'
-    user:      'guest'
-    password:  'guest'
+  - vhost: '/'
+    host:     'localhost'
+    port:     '15672'
+    name:     '(First Queue Name)'
+    user:     'guest'
+    password: 'guest'
+  - vhost: '/'
+    host:     'localhost'
+    port:     '15672'
+    name:     '(Second Queue Name)'
+    user:     'guest'
+    password: 'guest'
 ```
 
+### Redis
+
+Configures the redis plugin on the local host running on port 6379.
+**Note: this module requires hiredis-devel be available to the system.**
+
+```yaml
+stackdriver::plugin::redis::host:    'localhost'
+stackdriver::plugin::redis::port:    '6379'
+stackdriver::plugin::redis::timeout: '2000'
+```
 
 ### Tomcat
 
-Configures monitoring for Tomcat on the local host running JMX on port 9991.  
-For reference on Stackdriver's [support site](http://feedback.stackdriver.com/knowledgebase/articles/244387-tomcat-monitoring).
+Configures monitoring for Tomcat on the local host running JMX on port 9991.
+For reference on Stackdriver's [support site](https://cloud.google.com/monitoring/agent/plugins/tomcat).
 
-You can use the sysconfig parameter to create the /etc/sysconfig/jmxtrans override config.
+You can use the sysconfig parameter to create the `/etc/sysconfig/jmxtrans` override config.
 
 ```yaml
-stackdriver::plugin::tomcat::ensure:  'present'
-stackdriver::plugin::tomcat::host:    'localhost'
-stackdriver::plugin::tomcat::port:    '9991'
-stackdriver::plugin::tomcat::path:    '/mnt/jmxtrans'
+stackdriver::plugin::tomcat::ensure: 'present'
+stackdriver::plugin::tomcat::host:   'localhost'
+stackdriver::plugin::tomcat::port:   '9991'
+stackdriver::plugin::tomcat::path:   '/mnt/jmxtrans'
 stackdriver::plugin::tomcat::sysconfig:
     'JAVA_HOME': '/usr/java/jdk1.7.0_45/'
 ```
 
-Pre-requisite: Enabling JMX remote on Tomcat is outside the scope of this module, 
-below are the changes you need to apply to your Tomcat.
+Pre-requisite: Enabling JMX remote on Tomcat is outside the scope of this module.
+Below are the changes you need to apply to your Tomcat.
 
-```
+```bash
 # Enable JMX Monitoring on Tomcat (/etc/sysconfig/tomcat)
 JAVA_OPTS="${JAVA_OPTS} -Dcom.sun.management.jmxremote"
 JAVA_OPTS="${JAVA_OPTS} -Dcom.sun.management.jmxremote.port=9991"
@@ -269,9 +271,15 @@ JAVA_OPTS="${JAVA_OPTS} -Dcom.sun.management.jmxremote.ssl=false"
 JAVA_OPTS="${JAVA_OPTS} -Djava.rmi.server.hostname=<%= @fqdn %>"
 ```
 
+### Zookeeper
+
+Configures the zookeeper plugin on the local host running on port 2181.
+
+```yaml
+stackdriver::plugin::zookeeper::host:    'localhost'
+stackdriver::plugin::zookeeper::port:    '2181'
+```
 
 ## See Also
 
-* Stackdriver Website: [http://www.stackdriver.com](http://www.stackdriver.com)
-* Stackdriver Signup:  [http://www.stackdriver.com/signup](http://www.stackdriver.com/signup)
-
+* Stackdriver Website: [https://cloud.google.com/monitoring/](https://cloud.google.com/monitoring/)
