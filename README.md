@@ -1,6 +1,7 @@
 # puppet-stackdriver-agent
 [![Build Status](https://travis-ci.org/broadinstitute/puppet-stackdriver-agent.svg?branch=master)](https://travis-ci.org/broadinstitute/puppet-stackdriver-agent)
 [![License (Apache 2.0)](https://img.shields.io/badge/license-Apache-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+
 Installs stackdriver-agent.
 
 This module was forked from https://github.com/dstockman/puppet-stackdriver-agent.  The original module appears to be unsupported currently, so we have created this fork.  We have added rspec tests, merged in several of the outstanding PRs from the original repo, and linked the repo up to [TravisCI](https://travis-ci.org/broadinstitute/puppet-stackdriver-agent) to run the automated tests on PRs.  We have also fixed some bugs we found along the way.
