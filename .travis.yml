@@ -5,9 +5,11 @@ cache:
   bundler: true
   directories:
     - $TRAVIS_BUILD_DIR/spec/fixtures/modules
-bundler_args: --without development system_tests
 before_install: rm Gemfile.lock || true
-script: "bundle exec rake spec"
+install:
+  - bundle install --without development system_tests --path=${BUNDLE_PATH:-vendor/bundle}
+  - bundle exec rake spec_prep
+script: bundle exec rake spec
 branches:
   only:
   - master
