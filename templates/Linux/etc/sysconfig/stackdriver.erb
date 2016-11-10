@@ -1,5 +1,17 @@
 # whether or not to autogenerate the stackdriver collectd config file
+<% if @autogen_config -%>
 AUTOGENERATE_COLLECTD_CONFIG="yes"
+<% else -%>
+AUTOGENERATE_COLLECTD_CONFIG="no"
+<% end -%>
 
+<% if @_apikey -%>
 # your stackdriver api key
-STACKDRIVER_API_KEY="<%= @apikey %>"
+STACKDRIVER_API_KEY="<%= @_apikey %>"
+<% end -%>
+
+<% if @detect_gcm -%>
+DETECT_GCM="yes"
+<% else -%>
+DETECT_GCM="no"
+<% end -%>

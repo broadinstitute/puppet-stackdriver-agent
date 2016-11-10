@@ -29,6 +29,8 @@
 #
 class stackdriver (
   $apikey         = undef,
+  $autogen_config = true,
+  $detect_gcm     = true,
   $ensure         = 'present',
   $managerepo     = true,
   $service_ensure = 'running',
@@ -41,8 +43,17 @@ class stackdriver (
 
 ) {
 
-  validate_string ( $apikey )
-  validate_array  ( $svc    )
+  if $apikey {
+    validate_string ( $apikey )
+    $_apikey = $apikey
+  } else {
+    $_apikey = undef
+  }
+
+  validate_array ($svc)
+  validate_bool ($autogen_config)
+  validate_bool ($detect_gcm)
+
   $lower_osfamily = downcase($::osfamily)
 
   # Runtime class definitions
